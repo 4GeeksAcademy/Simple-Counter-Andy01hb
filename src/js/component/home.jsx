@@ -1,26 +1,77 @@
-import React from "react";
+// src/js/component/Home.jsx
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
+import '../../styles/home.css';
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+function Home() {
+  const [seconds, setSeconds] = useState(0);
+  const [isActive, setIsActive] = useState(true);
+  const [isCountdown, setIsCountdown] = useState(false);
+  const [alertTime, setAlertTime] = useState(null);
 
-//create your first component
-const Home = () => {
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
-	);
-};
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds(prevSeconds => {
+          const newTime = isCountdown ? prevSeconds - 1 : prevSeconds + 1;
+          if (alertTime !== null && newTime === alertTime) {
+            alert(`Time reached: ${alertTime} seconds`);
+          }
+          return newTime;
+        });
+      }, 1000);
+    } else if (!isActive && seconds !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, seconds, isCountdown, alertTime]);
+
+  const formatNumber = (number) => {
+    return String(number).padStart(6, '0').split('');
+  };
+
+  const handleReset = () => {
+    setSeconds(0);
+    setIsActive(false);
+    setIsCountdown(false);
+  };
+
+  const handleCountdown = (countdownTime) => {
+    setSeconds(countdownTime);
+    setIsCountdown(true);
+    setIsActive(true);
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <div className="counter">
+          <div className="digit"><FontAwesomeIcon icon={faClock} /></div>
+          {formatNumber(seconds).map((digit, index) => (
+            <div key={index} className="digit">{digit}</div>
+          ))}
+        </div>
+        <div className="controls">
+          <button onClick={() => setIsActive(!isActive)}>
+            {isActive ? 'Stop' : 'Resume'}
+          </button>
+          <button onClick={handleReset}>Reset</button>
+          <input 
+            type="number" 
+            placeholder="Set alert time" 
+            onChange={(e) => setAlertTime(Number(e.target.value))} 
+          />
+          <input 
+            type="number" 
+            placeholder="Countdown from" 
+            onBlur={(e) => handleCountdown(Number(e.target.value))} 
+          />
+        </div>
+      </header>
+    </div>
+  );
+}
 
 export default Home;

@@ -1,13 +1,11 @@
-//import react into the bundle
-import React from "react";
-import ReactDOM from "react-dom/client";
-
-// include your styles into the webpack bundle
+// src/js/index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import "../styles/index.css";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
-//import your own components
-import Home from "./component/home.jsx";
+// Import your own components
+import Home from './component/home.jsx';
 
-//render your react application
-ReactDOM.createRoot(document.getElementById('app')).render(<Home/>);
-
+// Render your React application
+ReactDOM.createRoot(document.getElementById('app')).render(<Home />);
